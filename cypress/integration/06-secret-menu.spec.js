@@ -39,4 +39,15 @@ describe('Secret Menu Items', () => {
   it('should exist have the title on the page', () => {
     cy.get('h1').should('contain', 'Secret Menu Items');
   });
+
+  for (const property of properties) {
+    it(`should have a column for ${property}`, () => {
+      cy.get(`#${property}-column`);
+    });
+
+    it(`should hide the ${property} column if unchecked`, () => {
+      cy.get(`#show-${property}`).click();
+      cy.get(`#${property}-column`).should('be.hidden');
+    });
+  }
 });
