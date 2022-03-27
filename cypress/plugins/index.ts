@@ -18,9 +18,12 @@ import seed from '../../prisma/seed.cjs';
 
 const plugins: Cypress.PluginConfig = (on) => {
   on('task', {
+    // I you're willing to mock and stub all your network reqs, it is no need to do this.
+    // Reset database
     reset() {
       return reset();
     },
+    // Seed database
     seed() {
       return seed();
     },
