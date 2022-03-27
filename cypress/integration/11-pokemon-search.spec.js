@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 const pokemon = [
-  { id: 1, name: 'Bumblesaur' },
+  { id: 1, name: 'Bulbasaur' },
   { id: 2, name: 'Charmer' },
   { id: 3, name: 'Turtle' },
 ];
@@ -39,12 +39,21 @@ describe('Pokémon Search', () => {
     // });
   });
 
-  it.only('should pre-populate the search field with the query parameter', () => {
+  it('should pre-populate the search field with the query parameter', () => {
     cy.visit({ url: '/pokemon-search', qs: { name: 'pik' } });
     cy.wait('@api').its('request.url').should('contain', 'name=pik');
   });
 
-  it('should render the results to the page', () => {});
+  it.only('should render the results to the page', () => {
+    // Everytime we hit this endpoint, we'll receive this value no matter what.
+    // Alternative A: JavaScript Object
+    cy.intercept('/pokemon-search/api?*', { pokemon }).as('stubbed');
+    cy.get('@search').type('ivy');
+
+    // Alternative B: Fixture
+    cy.intercept('/pokemon-search/api/1', { fixture: 'Bulbasaur' }).as('bulbaFixture');
+    cy.get('[data-test="results"] a').first().click();
+  });
 
   it('should link to the correct pokémon', () => {});
 
