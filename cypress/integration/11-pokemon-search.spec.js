@@ -16,13 +16,33 @@ describe('Pokémon Search', () => {
     cy.intercept('/pokemon-search/api?*').as('api');
   });
 
-  it('should call the API when the user types', () => {});
+  it('should call the API when the user types', () => {
+    cy.get('@search').type('psy');
+    // This will fail, if the wait is not triggered in the allotted amount of time.
+    cy.wait('@api');
+  });
 
-  it('should update the query parameter', () => {});
+  it('should update the query parameter', () => {
+    cy.get('@search').type('psy');
+    cy.wait('@api');
+    cy.location('search').should('equal', '?name=psy');
+  });
 
-  it('should call the API with correct query parameter', () => {});
+  it('should call the API with correct query parameter', () => {
+    cy.get('@search').type('psy');
+    cy.wait('@api').its('request.url').should('contain', 'name=psy');
 
-  it('should pre-populate the search field with the query parameter', () => {});
+    // Other alternative
+    // cy.wait('@api').then((interception) => console.log(interception));
+    // cy.wait('@api').then((interception) => {
+    //   expect(interception.request.url).to.contain('name=psy');
+    // });
+  });
+
+  it.only('should pre-populate the search field with the query parameter', () => {
+    cy.visit({ url: '/pokemon-search', qs: { name: 'pik' } });
+    cy.wait('@api').its('request.url').should('contain', 'name=pik');
+  });
 
   it('should render the results to the page', () => {});
 
