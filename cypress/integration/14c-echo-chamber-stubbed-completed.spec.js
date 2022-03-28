@@ -9,10 +9,12 @@ describe('Signing in with a seeded database', () => {
   beforeEach(() => {
     cy.setCookie('jwt', encodeToken({ id: 1, email: 'first@example.com' }));
 
+    // GET request fake data
     cy.intercept('GET', '/echo-chamber/api', { fixture: 'posts' }).as('postsApi');
     cy.intercept('GET', /\/echo-chamber\/api\/\d+/, { fixture: 'post' }).as('postApi');
     cy.intercept('GET', '/echo-chamber/api/users', { fixture: 'users' }).as('usersApi');
 
+    // POST request fake data
     cy.intercept('POST', '/echo-chamber/api', {
       statusCode: 201,
       body: {
@@ -31,6 +33,7 @@ describe('Signing in with a seeded database', () => {
     cy.getData('post-create-submit').as('newPostSubmit');
     cy.getData('post-preview-list').find('article').as('previews');
 
+    // grabs the first post and aliases
     cy.fixture('posts').then(({ posts }) => cy.wrap(posts[0]).as('firstPost'));
   });
 
@@ -55,6 +58,7 @@ describe('Signing in with a seeded database', () => {
   describe('An individual post', () => {
     beforeEach(() => {
       cy.get('@previews').first().click();
+      // Not necessarily need to test that the database is doing that if you have server tests.
       cy.intercept('PATCH', '/echo-chamber/api/*').as('patchRequest');
       cy.intercept('DELETE', '/echo-chamber/api/*').as('deleteRequest');
     });
